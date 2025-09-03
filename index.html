@@ -123,6 +123,31 @@
             font-size: 0.875rem;
             margin-top: 0.25rem;
         }
+        #backToTop.show {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+#backToTop:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+@media (max-width: 768px) {
+    #backToTop {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+    }
+    
+    #backToTop i {
+        font-size: 16px;
+    }
+    
+    #backToTop .absolute {
+        display: none; /* Hide tooltip on mobile */
+    }
+}
     </style>
     
     <script>
@@ -1660,6 +1685,14 @@
            </button>
        </div>
    </div>
+   
+   <!-- Back to Top Button -->
+<button id="backToTop" class="fixed bottom-6 right-6 bg-primary text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 opacity-0 pointer-events-none z-40 group">
+    <i class="fas fa-chevron-up text-xl group-hover:animate-bounce"></i>
+    <div class="absolute -top-12 -left-8 bg-gray-800 text-white text-sm px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+        Back to Top
+    </div>
+</button>
 
    <!-- AOS Animation Library -->
    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
@@ -1837,21 +1870,24 @@ document.getElementById('surveyForm').addEventListener('submit', async function(
         }
         
         if (response.ok && data.status === 'success') {
-            // Success message
-            alert('Survey submitted successfully! Thank you for your participation.\n\nSubmission ID: ' + (data.id || 'N/A'));
-            
-            // Reset form
-            this.reset();
-            
-            // Clear any saved drafts
-            if (typeof clearDraft === 'function') {
-                clearDraft();
-            }
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-        } else {
+    // Show success modal instead of alert
+    showSuccessModal();
+    
+    // Reset form
+    this.reset();
+    
+    // Clear any saved drafts
+    if (typeof clearDraft === 'function') {
+        clearDraft();
+    }
+    
+    // Update progress after reset
+    updateProgress();
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+} else {
             // Handle error response
             console.error('Submission failed:', data);
             let errorMessage = data.message || 'Submission failed for unknown reason';
@@ -2293,6 +2329,40 @@ const requiredTextFields = ['survey_location'];
         progressRing.style.strokeDashoffset = offset;
         progressText.textContent = Math.round(progress) + '%';
     };
+});
+
+// Back to Top functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const backToTopButton = document.getElementById('backToTop');
+    let isVisible = false;
+
+    // Show/hide button based on scroll position
+    function toggleBackToTop() {
+        const shouldShow = window.pageYOffset > 300;
+        
+        if (shouldShow && !isVisible) {
+            backToTopButton.classList.add('show');
+            isVisible = true;
+        } else if (!shouldShow && isVisible) {
+            backToTopButton.classList.remove('show');
+            isVisible = false;
+        }
+    }
+
+    // Smooth scroll to top
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // Event listeners
+    window.addEventListener('scroll', toggleBackToTop);
+    backToTopButton.addEventListener('click', scrollToTop);
+
+    // Initialize on page load
+    toggleBackToTop();
 });
 </script>
 </body>
