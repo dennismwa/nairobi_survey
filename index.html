@@ -1682,15 +1682,8 @@
            form.querySelectorAll('.error-message').forEach(el => el.remove());
 
            // Check required radio groups - all WOD questions are required
-           const radioGroups = [
-               'gender', 'age', 'education', 'occupation', 'income', 'car_ownership', 'bus_usage', 'walking_usage', 'transport_mode',
-               'general_safety', 'accident_concern', 'driver_yield', 'night_safety', 'walkway_importance', 'obstacles_frequency', 
-               'path_connectivity', 'comfort_satisfaction', 'walkway_obstruction', 'street_lighting', 'road_surface_safety', 
-               'traffic_calming', 'income_limitation', 'affordability_influence', 'cost_effect', 'walk_frequency', 
-               'safety_route_choice', 'leisure_walk', 'vehicle_speed_risk', 'witness_accidents', 'crossing_danger',
-               'bus_stop_convenience', 'path_friendliness', 'job_accessibility', 'vulnerable_accommodation', 
-               'children_school_safety', 'wheelchair_accessibility', 'equal_access_effectiveness'
-           ];
+           // Check required radio groups - only require basic demographic fields
+const radioGroups = ['gender', 'age'];
            
            radioGroups.forEach(groupName => {
                const radios = form.querySelectorAll(`input[name="${groupName}"]`);
@@ -1722,18 +1715,7 @@
                }
            });
 
-           // Check barriers checkboxes (at least one required)
-           const barrierCheckboxes = form.querySelectorAll('input[name="barriers[]"]');
-           const checkedBarriers = form.querySelectorAll('input[name="barriers[]"]:checked');
-           if (checkedBarriers.length === 0) {
-               isValid = false;
-               barrierCheckboxes[0].closest('.space-y-4').classList.add('error');
-               const errorMsg = document.createElement('div');
-               errorMsg.className = 'error-message';
-               errorMsg.textContent = 'Please select at least one barrier';
-               barrierCheckboxes[0].closest('.space-y-4').appendChild(errorMsg);
-               errors.push('Barriers selection is required');
-           }
+           
 
            if (!isValid) {
                // Scroll to first error
@@ -2283,7 +2265,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Count required text fields (including new survey_location)
-        const requiredTextFields = ['trip_origin', 'trip_destination', 'sub_county', 'ward', 'estate', 'survey_location', 'additional_comments'];
+        // Check required text fields - only require essential fields
+const requiredTextFields = ['survey_location'];
         
         requiredTextFields.forEach(fieldName => {
             totalFields++;
